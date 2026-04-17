@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Frz_Bro V1.1</title>
+        <style>
+            :root {
+                --accent: #00ff88;
+                --bg-main: #05070a;
+                --card-bg: #0f172a;
+                --input-bg: #020617;
+                --gold: #f59e0b;
+                --text: #f1f5f9;
+                --danger: #ff4d4d;
+            }
+
+            body {
+                margin: 0;
+                background: var(--bg-main);
+                background-image: radial-gradient(circle at top right, #1e293b, transparent);
+                font-family: 'Segoe UI', Roboto, sans-serif;
+                color: var(--text);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .header {
+                background: rgba(15, 23, 42, 0.9);
+                backdrop-filter: blur(10px);
+                padding: 20px 10px;
+                text-align: center;
+                border-bottom: 3px solid var(--gold);
+                box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            h1 {
+                margin: 0;
+                font-size: 22px;
+                font-weight: 900;
+                background: linear-gradient(to right, var(--gold), #fff, var(--gold));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                text-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+            }
+
+            .ramadhan-tag {
+                font-size: 11px;
+                color: var(--gold);
+                font-weight: 700;
+                margin-top: 6px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+            }
+
+            .container {
+                padding: 15px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                max-width: 500px;
+                margin: 0 auto;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .card {
+                background: var(--card-bg);
+                border-radius: 16px;
+                padding: 20px;
+                border: 1px solid rgba(255,255,255,0.08);
+                position: relative;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            }
+
+            .disabled-card {
+                opacity: 0.35;
+                filter: grayscale(1);
+                transform: scale(0.98);
+            }
+
+            .disabled-card input:not([type="checkbox"]), .disabled-card .counter, .disabled-card .bar-bg {
+                pointer-events: none;
+            }
+
+            .active-section {
+                border: 1px solid var(--accent);
+                box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+                transform: scale(1.02);
+                background: rgba(15, 23, 42, 1);
+            }
+
+            .engine-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .tag {
+                font-size: 10px;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-weight: 900;
+                color: #fff;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .tag-bing {
+                background: linear-gradient(45deg, #0078d4, #00bcf2);
+            }
+
+            .tag-msn {
+                background: linear-gradient(45deg, #00f2fe, #4facfe);
+                color: #000;
+            }
+
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 44px;
+                height: 24px;
+                z-index: 10;
+            }
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #334155;
+                transition: .4s;
+                border-radius: 24px;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+            input:checked + .slider {
+                background-color: var(--accent);
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
+
+            .label-group {
+                font-size: 11px;
+                color: #94a3b8;
+                font-weight: 800;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            input[type="number"] {
+                width: 100%;
+                background: var(--input-bg);
+                border: 1px solid #1e293b;
+                padding: 12px;
+                border-radius: 10px;
+                color: white;
+                font-size: 15px;
+                font-weight: 600;
+                box-sizing: border-box;
+                transition: 0.3s;
+            }
+
+            .status-msg {
+                margin-top: 12px;
+                font-size: 13px;
+                color: #94a3b8;
+                min-height: 20px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .progress-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                margin-top: 15px;
+            }
+
+            .counter {
+                font-size: 26px;
+                font-weight: 900;
+                color: var(--gold);
+                font-family: 'Courier New', monospace;
+            }
+
+            .bar-bg {
+                width: 100%;
+                height: 10px;
+                background: #1e293b;
+                border-radius: 20px;
+                margin-top: 10px;
+                overflow: hidden;
+                border: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .bar-fill {
+                width: 0%;
+                height: 100%;
+                transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                background: linear-gradient(90deg, var(--accent), #34d399);
+                box-shadow: 0 0 10px var(--accent);
+            }
+
+            .controls {
+                padding: 20px;
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(15px);
+                position: sticky;
+                bottom: 0;
+                border-top: 2px solid rgba(245, 158, 11, 0.3);
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+            }
+
+            .btn-group-running {
+                display: none;
+                gap: 12px;
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 16px;
+                border: none;
+                border-radius: 12px;
+                font-weight: 900;
+                cursor: pointer;
+                text-transform: uppercase;
+                font-size: 13px;
+                letter-spacing: 1px;
+                transition: all 0.3s;
+            }
+
+            .btn-start {
+                background: linear-gradient(135deg, #059669, #10b981);
+                color: white;
+                width: 100%;
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            }
+
+            .btn-pause {
+                background: linear-gradient(135deg, #d97706, #f59e0b);
+                color: white;
+            }
+
+            .btn-reset {
+                background: #334155;
+                color: white;
+            }
+
+            /* LOGOUT MERAH */
+            .btn-logout {
+                background: transparent;
+                color: var(--danger);
+                border: 2px solid var(--danger);
+                width: 100%;
+            }
+
+            .btn-logout:hover {
+                background: var(--danger);
+                color: white;
+            }
+
+            .footer-quote {
+                display: none;
+                padding: 18px;
+                background: rgba(245, 158, 11, 0.08);
+                border-radius: 14px;
+                border-left: 5px solid var(--gold);
+                color: #cbd5e1;
+                font-size: 13px;
+                text-align: center;
+                font-weight: 600;
+                line-height: 1.6;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            // Pesan Selamat Datang / Disclaimer - Hanya muncul sekali agar tidak mengganggu ternak akun
+            if (!localStorage.getItem("frzBro_Welcome")) {
+                alert("Ahlan wasahlan " + "BING LOKAL" + " di AutoPilot Frz_Bro Version. \n\nAutoPilot ini Free selama Ramadhan 1447 H. Gunakan dengan bijak, dilarang keras menyebarluaskan, mengcopy, menduplikat AutoPilot ini tanpa izin dari Developer. Jazakumullahu Khaira");
+                localStorage.setItem("frzBro_Welcome", "true");
+            }
+        </script>
+        <div class="header">
+            <h1>Frz_Bro V1.1</h1>
+            <div class="ramadhan-tag">Mulai Dengan Niat Yang Baik</div>
+        </div>
+        <div class="container">
+            <div class="card" id="secM">
+                <div class="engine-header">
+                    <span class="tag tag-msn">MSN Engine</span>
+                    <label class="switch">
+                        <input type="checkbox" id="onM" checked onchange="updateView('M')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="label-group">Target Baca</div>
+                <input type="number" id="tgtM" value="10">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top:15px;">
+                    <div>
+                        <div class="label-group">Min (detik)</div>
+                        <input type="number" id="vMinM" value="8">
+                    </div>
+                    <div>
+                        <div class="label-group">Max (detik)</div>
+                        <input type="number" id="vMaxM" value="15">
+                    </div>
+                </div>
+                <div class="status-msg" id="msgM">Standby...</div>
+                <div class="progress-info">
+                    <div class="counter">
+                        <span id="doneM">0</span>
+                        <span style="font-size:14px; color:#475569;">
+                            /<span id="totalM">10</span>
+                        </span>
+                    </div>
+                    <div style="font-size:10px; color: #f59e0b; font-weight:bold;">MSN MISSION</div>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="fillM" style="background: linear-gradient(90deg, var(--gold), #fbbf24)"></div>
+                </div>
+            </div>
+            <div id="finalQuote" class="footer-quote">"Manfaatkan Ramadhan tahun ini, jangan disia-siakan karena kita sibuk dengan BING REWARDS ini. Atur waktu sebaik mungkin, salam #AntiSuspend dari Yahya Alkumayi"</div>
+            <div class="card" id="secB">
+                <div class="engine-header">
+                    <span class="tag tag-bing">Bing Engine</span>
+                    <label class="switch">
+                        <input type="checkbox" id="onB" checked onchange="updateView('B')">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="label-group">Target Pencarian</div>
+                <input type="number" id="tgtB" value="20">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top:15px;">
+                    <div>
+                        <div class="label-group">Min (detik)</div>
+                        <input type="number" id="vMinB" value="8">
+                    </div>
+                    <div>
+                        <div class="label-group">Max (detik)</div>
+                        <input type="number" id="vMaxB" value="15">
+                    </div>
+                </div>
+                <div class="status-msg" id="msgB">Menunggu MSN...</div>
+                <div class="progress-info">
+                    <div class="counter">
+                        <span id="doneB">0</span>
+                        <span style="font-size:14px; color:#475569;">
+                            /<span id="totalB">20</span>
+                        </span>
+                    </div>
+                    <div style="font-size:10px; color: #0078d4; font-weight:bold;">BING MISSION</div>
+                </div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="fillB"></div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <label style="font-size: 13px; color: #94a3b8; font-weight: 600; display:flex; align-items:center; gap:8px; cursor: pointer;">
+                    <input type="checkbox" id="autoStartCb" style="width: 16px; height: 16px;" onchange="saveSettings()">
+                    Auto-Start (Langsung jalan pas web dibuka)
+                </label>
+            </div>
+            <button class="btn btn-start" id="startBtn" onclick="launch()">Mulai Misi</button>
+            <div class="btn-group-running" id="runningBtns">
+                <button class="btn btn-pause" id="pauseBtn" onclick="togglePause()">Jeda</button>
+                <button class="btn btn-reset" onclick="location.reload()">Reset</button>
+            </div>
+            <button class="btn btn-logout" onclick="window.location.href = 'https://login.live.com/logout.srf'">LOGOUT MICROSOFT</button>
+        </div>
+        <script>
+            function superShuffle(arr) {
+                let a = [...arr];
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = window.crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+                    [a[i],a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+            let linksM = [];
+            let wordsB = [];
+            let cB = 0
+              , cM = 0
+              , isBingActive = false
+              , isMsnActive = false
+              , isPaused = false
+              , currentTimer = null
+              , safetyTimer = null;
+            let activeWin = null;
+
+            // --- FITUR TERNAK AKUN ---
+            function saveSettings() {
+                const settings = {
+                    onM: document.getElementById("onM").checked,
+                    tgtM: document.getElementById("tgtM").value,
+                    vMinM: document.getElementById("vMinM").value,
+                    vMaxM: document.getElementById("vMaxM").value,
+                    onB: document.getElementById("onB").checked,
+                    tgtB: document.getElementById("tgtB").value,
+                    vMinB: document.getElementById("vMinB").value,
+                    vMaxB: document.getElementById("vMaxB").value,
+                    autoStartCb: document.getElementById("autoStartCb").checked
+                };
+                localStorage.setItem("frzBroSettings", JSON.stringify(settings));
+            }
+
+            function loadSettings() {
+                const saved = localStorage.getItem("frzBroSettings");
+                if (saved) {
+                    try {
+                        const s = JSON.parse(saved);
+                        if(s.onM !== undefined) document.getElementById("onM").checked = s.onM;
+                        if(s.tgtM !== undefined) document.getElementById("tgtM").value = s.tgtM;
+                        if(s.vMinM !== undefined) document.getElementById("vMinM").value = s.vMinM;
+                        if(s.vMaxM !== undefined) document.getElementById("vMaxM").value = s.vMaxM;
+                        if(s.onB !== undefined) document.getElementById("onB").checked = s.onB;
+                        if(s.tgtB !== undefined) document.getElementById("tgtB").value = s.tgtB;
+                        if(s.vMinB !== undefined) document.getElementById("vMinB").value = s.vMinB;
+                        if(s.vMaxB !== undefined) document.getElementById("vMaxB").value = s.vMaxB;
+                        if(s.autoStartCb !== undefined) document.getElementById("autoStartCb").checked = s.autoStartCb;
+                        updateView('M');
+                        updateView('B');
+                    } catch(e) {}
+                }
+            }
+
+            function playBeep() {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = "sine";
+                    osc.frequency.value = 800; // Frekuensi notifikasi
+                    gain.gain.setValueAtTime(0, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
+                    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.5);
+                } catch(e) {}
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                loadSettings();
+                document.querySelectorAll('input').forEach(el => {
+                    el.addEventListener('change', saveSettings);
+                });
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                if (document.getElementById("autoStartCb").checked || urlParams.get('autostart') == '1') {
+                    // Jeda 2 detik sebelum mulai untuk memastikan tab termuat sempurna
+                    setTimeout(() => {
+                        launch();
+                    }, 2000);
+                }
+            });
+            // -------------------------
+
+            function updateView(type) {
+                const isChecked = document.getElementById('on' + type).checked;
+                const card = document.getElementById('sec' + type);
+                if (isChecked) {
+                    card.classList.remove('disabled-card');
+                } else {
+                    card.classList.add('disabled-card');
+                }
+            }
+
+            function generateCVID() {
+                const chars = '0123456789ABCDEF';
+                let res = '';
+                for (let i = 0; i < 32; i++)
+                    res += chars.charAt(Math.floor(Math.random() * 16));
+                return res;
+            }
+
+            function closeActiveWindow() {
+                if (activeWin) {
+                    try {
+                        activeWin.close();
+                    } catch (e) {}
+                    activeWin = null;
+                }
+            }
+
+            function launch() {
+                const useB = document.getElementById("onB").checked;
+                const useM = document.getElementById("onM").checked;
+                if (!useB && !useM)
+                    return alert("Pilih minimal satu Engine!");
+
+                linksM = superShuffle(["https://www.msn.com/en-gb/news/news/content/ar-AA1VABJc?ocid=sapphireappshare", "https://www.msn.com/en-gb/news/news/content/ar-AA1Xp0uN?ocid=sapphireappshare", "https://www.msn.com/en-gb/news/news/content/ar-AA1Wsdfz?ocid=sapphireappshare", "https://www.msn.com/en-us/news/technology/distance-not-disturbance-marks-world-wildlife-day-message/ar-AA1XsaGB", "https://www.msn.com/en-us/news/technology/black-cat-found-the-best-way-to-end-play-time-with-ferrets-and-we-re-still-laughing/ar-AA1XstYl", "https://www.msn.com/en-us/tv/recaps/mama-goat-trixie-can-t-find-her-baby-hiding-right-under-her-nose/ar-AA1Xth0z", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/researchers-issue-warning-as-dangerous-wild-animals-are-spotted-in-unexpected-location-here-s-why-it-s-so-concerning/ar-AA1X735H", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/rescue-officer-priscilla-wolcott-cuddles-stray-mama-dog-before-finding-her-puppies/ar-AA1XtbaD", "https://www.msn.com/en-us/lifestyle/home-and-garden/20-easy-flowers-that-practically-grow-themselves/ar-AA1WmnQ5", "https://www.msn.com/en-us/lifestyle/home-and-garden/smoke-a-joint-and-get-deep-with-flowers-at-this-guided-floral-design-workshop-in-dtla/ar-AA1XmiD8", "https://www.msn.com/en-us/lifestyle/home-and-garden/10-fast-growing-flowering-trees-that-add-instant-curb-appeal/ar-AA1WAUv2", "https://www.msn.com/en-us/lifestyle/home-and-garden/the-flower-giving-rules-grandma-swore-by-and-what-experts-say-now/ar-AA1Wi4Wq", "https://www.msn.com/en-us/lifestyle/home-and-garden/are-peonies-perennials-here-s-what-to-know-before-you-plant-this-spring/ar-AA1WYjBz", "https://www.msn.com/en-us/lifestyle/home-and-garden/what-to-know-about-ikebana-the-beautiful-ancient-art-of-japanese-flower-arranging/ar-AA1D3GaI", "https://www.msn.com/en-us/lifestyle/home-and-garden/the-most-romantic-roses-you-can-grow-at-home/ar-AA1Wiqsv", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/10-dog-breeds-so-friendly-they-d-welcome-a-burglar-with-a-wagging-tail/ss-AA1XoEQL", "https://www.msn.com/en-us/travel/tripideas/where-to-see-animals-this-world-wildlife-day/ss-AA1Xr8e7", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/20-unique-wildlife-sanctuaries-that-treat-animals-kindly-and-humanely/ss-AA1X3fU6", "https://www.msn.com/en-us/lifestyle/pets/22-pawdorable-raccoons-getting-up-to-no-good/ss-AA1XdEgM", "https://www.msn.com/en-us/travel/tripideas/this-130-year-old-zoo-is-home-to-17-000-incredible-animals/ss-AA1Xnj7X"]);
+                wordsB = superShuffle(["sejarah singkat nabi muhamad saw", "kisah nabi muhamad dlam prang badar", "sifat wajib bagi nabi dan rosul", "bukti cinta kpada baginda nabi", "keistimewaan bulan suci romadhon 2026", "cara dapet malem lailatul qodar", "amalan utama di 10 hari trakhir ramadan", "doa nuzulul quran tanggal brapa", "berita islam terkini palestina gaza", "kondisi masidil aqsa hari ini maret 2026", "perkembangan islam di benua eropa", "tokoh ilmuwan muslim pling berpengaruh", "cara khusu sholat tahajud tngah malm", "dzikir pagi petang pembuka pntu rejeki", "keutamaan puasa hari ke 10 ramadhan", "jadwal imsakiyah ramadan jabodetabek", "resep menu takjil sehat tnp gorengan", "tips khatam quran 2 kali dlam sbulan", "hukum pake inhaler pas lgi puasa", "apakah donor darah bisa batalin puasa?", "tanda kiamat yg sdh muncul di arab", "penjelasan ttg padang mahsyar dan mizan", "cara bayar zakat mal pke aplikasi online", "niat zakat fitrah buat diri sndiri dan kluarga", "hukum potong rambut pas lgi puasa", "cara didik anak cinta islam sejk dini", "kisah sahabat nabi yg paling kaya", "keajaiban sedekah subuh tiap hari", "doa agar istiqomah di jlan allah", "manfaat puasa buat ksehatan jantung", "apa itu teknologi finansial syariah", "cara investasi emas yg halal dan aman", "update perang iran vs israel hari ini", "nasib pengungsi muslim di dunia trkini", "peran pemuda muslim di era digital", "tutorial wudhu yang bener sesuai sunah", "bacaan surat yasin dan tahlil lngkap", "cara cepet hafal juz amma buat pemula", "keutamaan sholat subuh brjamaah di mesjid", "hukum trading kripto menurut mui 2026", "cara ngatasi malas ibadah pas puasa", "amalan pengganti bagi wanita haid di ramadan", "apa itu rukun iman dan islam jelaskn", "sejarah masuknya islam ke nusantara", "syarat sah puasa menurut 4 madzhab", "tips blanja baju lebaran hemat di marketplace", "persiapan mudik lebaran 2026 biar tenang", "cara cek arah kiblat pke hp akurat", "kumpulan hadits pendek ttg kejujuran", "doa minta ampunan dosa orang tua"]);
+
+                document.getElementById("startBtn").style.display = "none";
+                document.getElementById("runningBtns").style.display = "flex";
+                document.querySelectorAll("input").forEach(el => el.disabled = true);
+                document.getElementById("onM").disabled = false;
+                document.getElementById("onB").disabled = false;
+
+                document.getElementById("totalB").innerText = document.getElementById("tgtB").value;
+                document.getElementById("totalM").innerText = document.getElementById("tgtM").value;
+
+                if (useM) {
+                    isMsnActive = true;
+                    document.getElementById("secM").classList.add("active-section");
+                    runMsn();
+                } else if (useB) {
+                    isBingActive = true;
+                    document.getElementById("secB").classList.add("active-section");
+                    runBing();
+                }
+            }
+
+            function togglePause() {
+                isPaused = !isPaused;
+                document.getElementById("pauseBtn").innerText = isPaused ? "Lanjut" : "Jeda";
+                if (isPaused) {
+                    clearTimeout(currentTimer);
+                    clearTimeout(safetyTimer);
+                } else {
+                    if (isMsnActive)
+                        runMsn();
+                    else if (isBingActive)
+                        runBing();
+                }
+            }
+
+            function nextStepM() {
+                clearTimeout(safetyTimer);
+                closeActiveWindow();
+                cM++;
+                document.getElementById("doneM").innerText = cM;
+                const tgt = parseInt(document.getElementById("tgtM").value) || 10;
+                document.getElementById("fillM").style.width = (cM / tgt * 100) + "%";
+
+                if (cM < tgt) {
+                    currentTimer = setTimeout(runMsn, 2500);
+                } else {
+                    isMsnActive = false;
+                    document.getElementById("secM").classList.remove("active-section");
+                    document.getElementById("msgM").innerText = "🏆 MSN Selesai!";
+
+                    if (document.getElementById("onB").checked) {
+                        const delay = Math.floor(Math.random() * (6 - 4 + 1) + 4) * 1000;
+                        document.getElementById("msgB").innerText = "⏳ Cooldown " + (delay / 1000) + " detik...";
+                        setTimeout( () => {
+                            isBingActive = true;
+                            document.getElementById("secB").classList.add("active-section");
+                            runBing();
+                        }
+                        , delay);
+                    } else {
+                        finishAll();
+                    }
+                }
+            }
+
+            function runMsn() {
+                if (isPaused || !isMsnActive)
+                    return;
+                if (linksM.length === 0)
+                    linksM = superShuffle(["https://www.msn.com/en-gb/news/news/content/ar-AA1VABJc?ocid=sapphireappshare", "https://www.msn.com/en-gb/news/news/content/ar-AA1Xp0uN?ocid=sapphireappshare", "https://www.msn.com/en-gb/news/news/content/ar-AA1Wsdfz?ocid=sapphireappshare", "https://www.msn.com/en-us/news/technology/distance-not-disturbance-marks-world-wildlife-day-message/ar-AA1XsaGB", "https://www.msn.com/en-us/news/technology/black-cat-found-the-best-way-to-end-play-time-with-ferrets-and-we-re-still-laughing/ar-AA1XstYl", "https://www.msn.com/en-us/tv/recaps/mama-goat-trixie-can-t-find-her-baby-hiding-right-under-her-nose/ar-AA1Xth0z", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/researchers-issue-warning-as-dangerous-wild-animals-are-spotted-in-unexpected-location-here-s-why-it-s-so-concerning/ar-AA1X735H", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/rescue-officer-priscilla-wolcott-cuddles-stray-mama-dog-before-finding-her-puppies/ar-AA1XtbaD", "https://www.msn.com/en-us/lifestyle/home-and-garden/20-easy-flowers-that-practically-grow-themselves/ar-AA1WmnQ5", "https://www.msn.com/en-us/lifestyle/home-and-garden/smoke-a-joint-and-get-deep-with-flowers-at-this-guided-floral-design-workshop-in-dtla/ar-AA1XmiD8", "https://www.msn.com/en-us/lifestyle/home-and-garden/10-fast-growing-flowering-trees-that-add-instant-curb-appeal/ar-AA1WAUv2", "https://www.msn.com/en-us/lifestyle/home-and-garden/the-flower-giving-rules-grandma-swore-by-and-what-experts-say-now/ar-AA1Wi4Wq", "https://www.msn.com/en-us/lifestyle/home-and-garden/are-peonies-perennials-here-s-what-to-know-before-you-plant-this-spring/ar-AA1WYjBz", "https://www.msn.com/en-us/lifestyle/home-and-garden/what-to-know-about-ikebana-the-beautiful-ancient-art-of-japanese-flower-arranging/ar-AA1D3GaI", "https://www.msn.com/en-us/lifestyle/home-and-garden/the-most-romantic-roses-you-can-grow-at-home/ar-AA1Wiqsv", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/10-dog-breeds-so-friendly-they-d-welcome-a-burglar-with-a-wagging-tail/ss-AA1XoEQL", "https://www.msn.com/en-us/travel/tripideas/where-to-see-animals-this-world-wildlife-day/ss-AA1Xr8e7", "https://www.msn.com/en-us/lifestyle/lifestyle-buzz/20-unique-wildlife-sanctuaries-that-treat-animals-kindly-and-humanely/ss-AA1X3fU6", "https://www.msn.com/en-us/lifestyle/pets/22-pawdorable-raccoons-getting-up-to-no-good/ss-AA1XdEgM", "https://www.msn.com/en-us/travel/tripideas/this-130-year-old-zoo-is-home-to-17-000-incredible-animals/ss-AA1Xnj7X"]);
+
+                const vMin = parseInt(document.getElementById("vMinM").value) || 8;
+                const vMax = parseInt(document.getElementById("vMaxM").value) || 15;
+                const vTime = Math.floor(Math.random() * (vMax - vMin + 1) + vMin) * 1000;
+
+                const url = linksM.pop();
+
+                document.getElementById("msgM").innerText = "🌐 Membaca MSN...";
+                try {
+                    activeWin = window.open(url, "_blank");
+                    clearTimeout(safetyTimer);
+                    safetyTimer = setTimeout( () => {
+                        nextStepM();
+                    }
+                    , vTime + 3000);
+                    clearTimeout(currentTimer);
+                    currentTimer = setTimeout( () => {
+                        nextStepM();
+                    }
+                    , vTime);
+                } catch (e) {
+                    nextStepM();
+                }
+            }
+
+            function nextStepB() {
+                clearTimeout(safetyTimer);
+                closeActiveWindow();
+                cB++;
+                document.getElementById("doneB").innerText = cB;
+                const tgt = parseInt(document.getElementById("tgtB").value) || 20;
+                document.getElementById("fillB").style.width = (cB / tgt * 100) + "%";
+                if (cB < tgt)
+                    currentTimer = setTimeout(runBing, 2000);
+                else
+                    finishAll();
+            }
+
+            function runBing() {
+                if (isPaused || !isBingActive)
+                    return;
+                if (wordsB.length === 0)
+                    wordsB = superShuffle(["sejarah singkat nabi muhamad saw", "kisah nabi muhamad dlam prang badar", "sifat wajib bagi nabi dan rosul", "bukti cinta kpada baginda nabi", "keistimewaan bulan suci romadhon 2026", "cara dapet malem lailatul qodar", "amalan utama di 10 hari trakhir ramadan", "doa nuzulul quran tanggal brapa", "berita islam terkini palestina gaza", "kondisi masidil aqsa hari ini maret 2026", "perkembangan islam di benua eropa", "tokoh ilmuwan muslim pling berpengaruh", "cara khusu sholat tahajud tngah malm", "dzikir pagi petang pembuka pntu rejeki", "keutamaan puasa hari ke 10 ramadhan", "jadwal imsakiyah ramadan jabodetabek", "resep menu takjil sehat tnp gorengan", "tips khatam quran 2 kali dlam sbulan", "hukum pake inhaler pas lgi puasa", "apakah donor darah bisa batalin puasa?", "tanda kiamat yg sdh muncul di arab", "penjelasan ttg padang mahsyar dan mizan", "cara bayar zakat mal pke aplikasi online", "niat zakat fitrah buat diri sndiri dan kluarga", "hukum potong rambut pas lgi puasa", "cara didik anak cinta islam sejk dini", "kisah sahabat nabi yg paling kaya", "keajaiban sedekah subuh tiap hari", "doa agar istiqomah di jlan allah", "manfaat puasa buat ksehatan jantung", "apa itu teknologi finansial syariah", "cara investasi emas yg halal dan aman", "update perang iran vs israel hari ini", "nasib pengungsi muslim di dunia trkini", "peran pemuda muslim di era digital", "tutorial wudhu yang bener sesuai sunah", "bacaan surat yasin dan tahlil lngkap", "cara cepet hafal juz amma buat pemula", "keutamaan sholat subuh brjamaah di mesjid", "hukum trading kripto menurut mui 2026", "cara ngatasi malas ibadah pas puasa", "amalan pengganti bagi wanita haid di ramadan", "apa itu rukun iman dan islam jelaskn", "sejarah masuknya islam ke nusantara", "syarat sah puasa menurut 4 madzhab", "tips blanja baju lebaran hemat di marketplace", "persiapan mudik lebaran 2026 biar tenang", "cara cek arah kiblat pke hp akurat", "kumpulan hadits pendek ttg kejujuran", "doa minta ampunan dosa orang tua"]);
+
+                const vMin = parseInt(document.getElementById("vMinB").value) || 8
+                  , vMax = parseInt(document.getElementById("vMaxB").value) || 15;
+                const q = wordsB.pop();
+
+                const vTime = Math.floor(Math.random() * (vMax - vMin + 1) + vMin) * 1000;
+                const url = "https://www.bing.com/search?q=" + encodeURIComponent(q) + "&qs=n&form=QBRE&cvid=" + generateCVID();
+                document.getElementById("msgB").innerText = "🔎 Mencari: " + q;
+                activeWin = window.open(url, "_blank");
+                clearTimeout(safetyTimer);
+                safetyTimer = setTimeout( () => {
+                    nextStepB();
+                }
+                , vTime + 4000);
+                clearTimeout(currentTimer);
+                currentTimer = setTimeout( () => {
+                    nextStepB();
+                }
+                , vTime);
+            }
+
+            function finishAll() {
+                closeActiveWindow();
+                document.getElementById("msgB").innerText = "🏆 Misi Berhasil!";
+                document.getElementById("finalQuote").style.display = "block";
+                document.getElementById("runningBtns").style.display = "none";
+                document.getElementById("startBtn").style.display = "block";
+                document.getElementById("startBtn").innerText = "Mulai Misi Baru";
+                document.getElementById("startBtn").disabled = false;
+                document.getElementById("startBtn").style.opacity = "1";
+                cM = 0;
+                cB = 0;
+                document.querySelectorAll("input").forEach(el => el.disabled = false);
+                playBeep(); // Fitur Ternak: Bunyikan suara saat selesai
+            }
+        </script>
+    </body>
+</html>
