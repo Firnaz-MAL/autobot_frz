@@ -711,6 +711,11 @@
                 cB = 0;
                 document.querySelectorAll("input").forEach(el => el.disabled = false);
                 playBeep(); // Fitur Ternak: Bunyikan suara saat selesai
+                
+                // MENGAKALI CHECK IN: Otomatis buka dashboard Bing Rewards di akhir misi
+                setTimeout(() => {
+                    window.open("https://rewards.bing.com/", "_blank");
+                }, 1000);
             }
         </script>
     </body>
